@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DATA ANALYST</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px;
+        }
+        .section {
+            width: 23%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+        .wall {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .week {
+            display: flex;
+            margin: 5px 0;
+        }
+        .block {
+            width: 70px;
+            height: 70px;
+            margin: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        .green {
+            background-color: #2ecc71;
+            color: black;
+        }
+        .red {
+            background-color: #e74c3c;
+            color: white;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .reset-button {
+            background-color: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="section">
+        <h2>Data Analyst</h2>
+        <button onclick="addBlock('green', 'wall1')">Agregar Día Productivo</button>
+        <button onclick="addBlock('red', 'wall1')">Agregar Día No Productivo</button>
+        <button class="reset-button" onclick="resetWall('wall1')">Resetear Sección 1</button>
+        <div id="wall1" class="wall"></div>
+    </div>
+
+    <div class="section">
+        <h2>Francés</h2>
+        <button onclick="addBlock('green', 'wall2')">Agregar Día Productivo</button>
+        <button onclick="addBlock('red', 'wall2')">Agregar Día No Productivo</button>
+        <button class="reset-button" onclick="resetWall('wall2')">Resetear Sección 2</button>
+        <div id="wall2" class="wall"></div>
+    </div>
+
+    <div class="section">
+        <h2>Ejercicio</h2>
+        <button onclick="addBlock('green', 'wall3')">Agregar Día Productivo</button>
+        <button onclick="addBlock('red', 'wall3')">Agregar Día No Productivo</button>
+        <button class="reset-button" onclick="resetWall('wall3')">Resetear Sección 3</button>
+        <div id="wall3" class="wall"></div>
+    </div>
+
+    <div class="section">
+        <h2>Evite ya sabes qué</h2>
+        <button onclick="addBlock('green', 'wall4')">Agregar Día Productivo</button>
+        <button onclick="addBlock('red', 'wall4')">Agregar Día No Productivo</button>
+        <button class="reset-button" onclick="resetWall('wall4')">Resetear Sección 4</button>
+        <div id="wall4" class="wall"></div>
+    </div>
+
+    <script>
+        const today = new Date();
+        let blockCount = today.getDate();
+        const currentMonth = today.getMonth();
+        let monthCount = currentMonth;
+
+        window.onload = function() {
+            loadBlocks('wall1');
+            loadBlocks('wall2');
+            loadBlocks('wall3');
+            loadBlocks('wall4');
+            checkAndUpdateBlockCount();
+        };
+
+        function checkAndUpdateBlockCount() {
+            const lastIncrementDate = localStorage.getItem('lastIncrementDate');
+            const todayString = today.toISOString().split('T')[0]; // Formato 'YYYY-MM-DD'
+
+            if (lastIncrementDate !== todayString) {
+                blockCount++;
+                localStorage.setItem('lastIncrementDate', todayString); // Actualiza la fecha
+                if (blockCount > new Date(today.getFullYear(), monthCount + 1, 0).getDate()) {
+                    blockCount = 1;
+                    monthCount++;
+                }
+            }
+        }
+
+        function addBlock(color, wallId) {
+            const wall = document.getElementById(wallId);
+            let currentWeek = wall.lastElementChild;
+
+            if (!currentWeek || currentWeek.children.length >= 7) {
+                currentWeek = document.createElement('div');
+                currentWeek.className = 'week';
+                wall.appendChild(currentWeek);
+            }
+
+            const block = document.createElement('div');
+            block.className = 'block ' + color;
+            block.textContent = `${blockCount} de ${getMonthName(monthCount)}`;
+            currentWeek.appendChild(block);
+
+            saveBlock(wallId, blockCount, monthCount, color);
+        }
+
+        function saveBlock(wallId, day, month, color) {
+            const blocks = JSON.parse(localStorage.getItem(wallId)) || [];
+            blocks.push({ day, month, color });
+            localStorage.setItem(wallId, JSON.stringify(blocks));
+        }
+
+        function loadBlocks(wallId) {
+            const blocks = JSON.parse(localStorage.getItem(wallId)) || [];
+            blocks.forEach(block => {
+                const wall = document.getElementById(wallId);
+                let currentWeek = wall.lastElementChild;
+
+                if (!currentWeek || currentWeek.children.length >= 7) {
+                    currentWeek = document.createElement('div');
+                    currentWeek.className = 'week';
+                    wall.appendChild(currentWeek);
+                }
+
+                const blockElement = document.createElement('div');
+                blockElement.className = 'block ' + block.color;
+                blockElement.textContent = `${block.day} de ${getMonthName(block.month)}`;
+                currentWeek.appendChild(blockElement);
+            });
+        }
+
+        function resetWall(wallId) {
+            const wall = document.getElementById(wallId);
+            wall.innerHTML = '';  // Limpia el contenido visual del muro
+            localStorage.removeItem(wallId);  // Limpia el almacenamiento en caché
+        }
+
+        function getMonthName(month) {
+            const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            return months[month % 12];
+        }
+    </script>
+</body>
+</html>
