@@ -1,90 +1,78 @@
-
-Skip to content
-Navigation Menu
-
-    RicardoAscF
-    /
-    avance_diario
-
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-
-    Settings
-
-Breadcrumbs
-
-    avance_diario
-
-/index.html
-Latest commit
- 
-History
-File metadata and controls
-
-179 lines (161 loc) · 6.21 KB
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tracker</title>
+    <title>Tracker de Productividad</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
-            margin: 20px;
+            justify-content: center;
+            gap: 20px;
         }
         .section {
-            width: 22%; /* Ajustado para permitir 4 secciones en horizontal */
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            margin-bottom: 20px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            font-size: 1.5em;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .reset-button {
+            background-color: #e74c3c;
+        }
+        .reset-button:hover {
+            background-color: #c0392b;
         }
         .wall {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             margin-top: 20px;
         }
         .week {
             display: flex;
-            margin: 5px 0;
+            justify-content: space-between;
+            margin-bottom: 10px;
         }
         .block {
-            width: 70px;
-            height: 70px;
+            width: 40px;
+            height: 40px;
             margin: 3px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
+            border-radius: 5px;
+            color: white;
         }
         .green {
             background-color: #2ecc71;
-            color: black;
         }
         .red {
             background-color: #e74c3c;
-            color: white;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 5px;
-        }
-        .reset-button {
-            background-color: #e74c3c;
-            color: white;
         }
     </style>
 </head>
@@ -92,33 +80,33 @@ File metadata and controls
 
     <div class="section">
         <h2>Data Analyst</h2>
-        <button onclick="addBlock('green', 'wall1')">Agregar Día Productivo</button>
-        <button onclick="addBlock('red', 'wall1')">Agregar Día No Productivo</button>
-        <button class="reset-button" onclick="resetWall('wall1')">Resetear Sección 1</button>
+        <button onclick="addBlock('green', 'wall1')">Día Productivo</button>
+        <button onclick="addBlock('red', 'wall1')">Día No Productivo</button>
+        <button class="reset-button" onclick="resetWall('wall1')">Resetear</button>
         <div id="wall1" class="wall"></div>
     </div>
 
     <div class="section">
         <h2>Francés</h2>
-        <button onclick="addBlock('green', 'wall2')">Agregar Día Productivo</button>
-        <button onclick="addBlock('red', 'wall2')">Agregar Día No Productivo</button>
-        <button class="reset-button" onclick="resetWall('wall2')">Resetear Sección 2</button>
+        <button onclick="addBlock('green', 'wall2')">Día Productivo</button>
+        <button onclick="addBlock('red', 'wall2')">Día No Productivo</button>
+        <button class="reset-button" onclick="resetWall('wall2')">Resetear</button>
         <div id="wall2" class="wall"></div>
     </div>
 
     <div class="section">
         <h2>Ejercicio</h2>
-        <button onclick="addBlock('green', 'wall3')">Agregar Día Productivo</button>
-        <button onclick="addBlock('red', 'wall3')">Agregar Día No Productivo</button>
-        <button class="reset-button" onclick="resetWall('wall3')">Resetear Sección 3</button>
+        <button onclick="addBlock('green', 'wall3')">Día Productivo</button>
+        <button onclick="addBlock('red', 'wall3')">Día No Productivo</button>
+        <button class="reset-button" onclick="resetWall('wall3')">Resetear</button>
         <div id="wall3" class="wall"></div>
     </div>
 
     <div class="section">
-        <h2>Evite ya sabes qué</h2>
-        <button onclick="addBlock('green', 'wall4')">Agregar Día Productivo</button>
-        <button onclick="addBlock('red', 'wall4')">Agregar Día No Productivo</button>
-        <button class="reset-button" onclick="resetWall('wall4')">Resetear Sección 4</button>
+        <h2>Evita ya sabes qué</h2>
+        <button onclick="addBlock('green', 'wall4')">Día Productivo</button>
+        <button onclick="addBlock('red', 'wall4')">Día No Productivo</button>
+        <button class="reset-button" onclick="resetWall('wall4')">Resetear</button>
         <div id="wall4" class="wall"></div>
     </div>
 
@@ -201,10 +189,9 @@ File metadata and controls
 
         function getMonthName(month) {
             const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
-                    "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+                            "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
             return months[month % 12];
         }
     </script>
 </body>
 </html>
-avance_diario/index.html at master · RicardoAscF/avance_diario
