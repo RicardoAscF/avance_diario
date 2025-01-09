@@ -162,7 +162,7 @@
 
             const block = document.createElement('div');
             block.className = 'block ' + color;
-            block.textContent = `${blockCount} de ${getMonthName(monthCount)}`;
+            block.textContent = `${blockCount}/${getMonthName(monthCount)}`;
             currentWeek.appendChild(block);
 
             saveBlock(wallId, blockCount, monthCount, color);
@@ -188,7 +188,7 @@
 
                 const blockElement = document.createElement('div');
                 blockElement.className = 'block ' + block.color;
-                blockElement.textContent = `${block.day} de ${getMonthName(block.month)}`;
+                blockElement.textContent = `${block.day}/${getMonthName(block.month)}`;
                 currentWeek.appendChild(blockElement);
             });
         }
@@ -200,8 +200,8 @@
         }
 
         function getMonthName(month) {
-            const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
-                            "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+            const months = ["En", "Fe", "Mz", "Ab", "My", "Jn",
+                            "Jl", "Ag", "Se", "Oc", "No", "Di"];
             return months[month % 12];
         }
     </script>
